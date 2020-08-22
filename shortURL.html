@@ -31,7 +31,7 @@
         methods:{
             onSubmit() {
                 var that = this;
-                axios.get('http://localhost:9091/',{
+                axios.get('http://localhost:9091/shortURL',{
                     params:{longurl:this.input}
                 }).then(function (response) {
                     console.log(response.data)

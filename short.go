@@ -32,9 +32,22 @@ func getShortURL(w http.ResponseWriter,r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(lastId)
 	//id转短网址
-
+	shortUrl := id2url(lastId)
+	_,err = db.Exec("update record set shorturl = '"+shortUrl+"' where id = ?",lastId)
+	if err != nil {
+		log.Fatal(err)
+	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w,"getlongurl")
+	fmt.Fprintf(w,shortUrl)
+}
+
+func getLongURL(w http.ResponseWriter,r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Fatal(err)
+	}
+	shortUrl := r.URL.Path
+	shortUrl = shortUrl[1:]
+	fmt.Println(shortUrl)
 }

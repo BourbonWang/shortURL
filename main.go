@@ -18,7 +18,8 @@ func openDB() *sql.DB{
 var db = openDB()
 
 func main() {
-	http.HandleFunc("/",getShortURL)
+	http.HandleFunc("/shortURL",getShortURL)
+	http.HandleFunc("/",getLongURL)
 	err := http.ListenAndServe(":9091",nil)
 	if err != nil {
 		log.Fatal(err)
