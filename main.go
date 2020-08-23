@@ -2,13 +2,13 @@ package main
 
 import (
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
-	_ "github.com/go-sql-driver/mysql"
 )
 
-func openDB() *sql.DB{
-	db,err := sql.Open("mysql","root:123456@tcp(121.41.73.98:3306)/shorturl")
+func openDB() *sql.DB {
+	db, err := sql.Open("mysql", "root:123456@tcp(121.41.73.98:3306)/shorturl")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -16,14 +16,15 @@ func openDB() *sql.DB{
 }
 
 var db = openDB()
+var ServerIP string = "127.0.0.1"
 
 func main() {
-	http.HandleFunc("/shortURL",getShortURL)
-	http.HandleFunc("/",getLongURL)
-	err := http.ListenAndServe(":9091",nil)
+	http.HandleFunc("/shortURL", getHTML)
+	http.HandleFunc("/getShortURL", getShortURL)
+	http.HandleFunc("/", getLongURL)
+	err := http.ListenAndServe(":9091", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 }
-
