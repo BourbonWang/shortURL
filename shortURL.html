@@ -9,35 +9,63 @@
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 </head>
 <body>
-    <div id="app">
-        <el-form :inline="true" class="demo-form-inline">
-            <el-form-item label="长网址">
-                <el-input v-model="input" placeholder="输入URL"></el-input>
+    <div id="app" >
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" :inline="true" :hide-required-asterisk="true"
+                 class="demo-form-inline" style="display: flex;justify-content: flex-start">
+            <el-form-item label="长网址" prop="input">
+                    <el-input v-model="ruleForm.input" placeholder="输入URL"  :style="width">
+                        <template slot="prepend">http://</template>
+                    </el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">转换</el-button>
+                <el-button type="primary" @click="onSubmit('ruleForm')" >转换</el-button>
             </el-form-item>
         </el-form>
+        <el-form :inline="true" class="demo-form-inline">
+            <el-form-item label=" 短网址">
+                <el-input v-model="shortURL" :disabled="true" :style="width"> </el-input>
+            </el-form-item>
+
+        </el-form>
+
     </div>
 </body>
 <script>
     var Main = {
         data() {
             return {
-                input: '',
-                shortURL: '请输入网址'
+                ruleForm:{
+                    input: '',
+                },
+                rules:{
+                    input:[{required: true, message: '请输入URL', trigger: 'blur'}]
+                },
+                shortURL: '请输入网址',
+                width:""
             }
         },
         methods:{
-            onSubmit() {
-                var that = this;
-                axios.get('http://localhost:9091/getShortURL',{
-                    params:{longurl:this.input}
-                }).then(function (response) {
-                    console.log(response.data)
-                    that.shortURL = response.data
-                })
-            }
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        var that = this;
+                        console.log(this.input);
+                        axios.get('http://localhost:9091/getShortURL',{
+                            params:{longurl:"http://"+this.ruleForm.input}
+                        }).then(function (response) {
+                            console.log(response.data)
+                            that.shortURL = "http://127.0.0.1:9091/"+response.data
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+
+        },
+        mounted(){
+            var width = document.body.clientWidth - 500;
+            this.width = "width:"+width+"px"
         }
     }
 

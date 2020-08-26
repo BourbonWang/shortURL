@@ -17,8 +17,12 @@ func openDB() *sql.DB {
 
 var db = openDB()
 var ServerIP string = "127.0.0.1"
+var Cache LRUcache
 
 func main() {
+	Cache.init(62 * 62 * 62)
+	go ipControllor()
+
 	http.HandleFunc("/shortURL", getHTML)
 	http.HandleFunc("/getShortURL", getShortURL)
 	http.HandleFunc("/", getLongURL)
@@ -26,5 +30,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.Close()
 }

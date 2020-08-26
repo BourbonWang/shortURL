@@ -27,8 +27,13 @@ func getShortURL(w http.ResponseWriter, r *http.Request) {
 	}
 	longurl := r.Form["longurl"][0]
 	fmt.Println(longurl)
-	//检查缓存
-
+	//查找缓存
+	cacheRes := Cache.find(longurl)
+	if len(cacheRes) > 0 {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, cacheRes)
+		return
+	}
 	//缓存未命中
 	stmt, err := db.Prepare("insert into record(longurl,times) value(?,?)")
 	if err != nil {
@@ -48,6 +53,8 @@ func getShortURL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	Cache.add(longurl, shortUrl)
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, shortUrl)
 }
@@ -59,19 +66,18 @@ func getLongURL(w http.ResponseWriter, r *http.Request) {
 	}
 	shortUrl := r.URL.Path
 	shortUrl = shortUrl[1:]
-	if len(shortUrl) > 6 || len(shortUrl) == 0 {
-		http.Redirect(w, r, "http://"+ServerIP+":9091/shortURL", http.StatusMovedPermanently)
+	ip := strings.Split(r.RemoteAddr, ":")[0]
+	//筛选短网址，ip
+	if len(shortUrl) > 6 || len(shortUrl) == 0 || checkIP(ip) {
+		http.Redirect(w, r, "http://"+ServerIP+":9091/shortURL", http.StatusFound)
 		return
 	}
-	ip := strings.Split(r.RemoteAddr, ":")[0]
-	//查ip
 
-	//
 	id := url2id(shortUrl)
 	var longUrl string
 	err = db.QueryRow("select longurl from record where id=?", id).Scan(&longUrl)
 	if err != nil {
-		http.Redirect(w, r, "http://"+ServerIP+":9091/shortURL", http.StatusMovedPermanently)
+		http.Redirect(w, r, "http://"+ServerIP+":9091/shortURL", http.StatusFound)
 		return
 	}
 	http.Redirect(w, r, longUrl, http.StatusFound)
