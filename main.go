@@ -8,7 +8,7 @@ import (
 )
 
 func openDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:123456@tcp(121.41.73.98:3306)/shorturl")
+	db, err := sql.Open("mysql", "user:password@tcp(host:port)/shorturl")
 	if err != nil {
 		log.Fatal(err)
 	}
