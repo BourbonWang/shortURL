@@ -50,11 +50,11 @@
                     if (valid) {
                         var that = this;
                         console.log(this.input);
-                        axios.get('http://localhost:9091/getShortURL',{
+                        axios.get('http://121.41.73.98:9091/getShortURL',{
                             params:{longurl:"http://"+this.ruleForm.input}
                         }).then(function (response) {
                             console.log(response.data)
-                            that.shortURL = "http://127.0.0.1:9091/"+response.data
+                            that.shortURL = response.data
                         })
                     } else {
                         return false;

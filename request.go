@@ -31,7 +31,7 @@ func getShortURL(w http.ResponseWriter, r *http.Request) {
 	cacheRes := Cache.find(longurl)
 	if len(cacheRes) > 0 {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, cacheRes)
+		fmt.Fprintf(w, "http://"+ServerIP+":9091/"+cacheRes)
 		return
 	}
 	//缓存未命中
@@ -56,7 +56,7 @@ func getShortURL(w http.ResponseWriter, r *http.Request) {
 	Cache.add(longurl, shortUrl)
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, shortUrl)
+	fmt.Fprintf(w, "http://"+ServerIP+":9091/"+shortUrl)
 }
 
 func getLongURL(w http.ResponseWriter, r *http.Request) {

@@ -16,7 +16,7 @@ func openDB() *sql.DB {
 }
 
 var db = openDB()
-var ServerIP string = "127.0.0.1"
+var ServerIP string = "121.41.73.98"
 var Cache LRUcache
 
 func main() {
